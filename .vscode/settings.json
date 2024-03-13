@@ -1,0 +1,33 @@
+{
+    "cSpell.words": [
+        "taskify",
+      "Atre",
+      "Gowsalyan",
+      "Malavika",
+      "Manisha",
+      "Maran",
+      "Ravan",
+      "roboto",
+      "Sachin",
+      "sidebarx",
+      "Sundar",
+      "Velmurugan"
+    ],
+  
+    "dart.previewFlutterUiGuides": true,
+  
+  
+    "[dart]": {
+      "editor.tabSize": 2,
+      "editor.insertSpaces": true,
+      "editor.detectIndentation": false,
+      "editor.suggest.insertMode": "replace",
+      "editor.defaultFormatter": "Dart-Code.dart-code",
+      "editor.inlayHints.enabled": "offUnlessPressed",
+      "editor.formatOnSave": true,
+    },
+  
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit"
+    }
+  }
