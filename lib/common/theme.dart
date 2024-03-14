@@ -9,6 +9,7 @@ ThemeData lightTheme = ThemeData(
     primary: Color(0xff2DBE5F),
     secondary: Color(0xff070707),
     tertiary: Color(0xffA9A9AB),
+    surface: Color(0xffF3F3F3),
     background: Color(0xffF5F5F5),
   ),
 );

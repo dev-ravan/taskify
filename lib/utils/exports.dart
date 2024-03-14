@@ -1,3 +1,15 @@
 export 'package:flutter/material.dart';
 export 'package:taskify/common/theme.dart';
 export 'package:taskify/features/auth/view/login.dart';
+export 'package:flutter_svg/svg.dart';
+export 'package:taskify/utils/images.dart';
+export 'package:taskify/utils/sizes.dart';
+export 'package:taskify/widgets/texts.dart';
+export 'package:flutter/services.dart';
+export 'package:google_fonts/google_fonts.dart';
+export 'package:taskify/model/form_items.dart';
+export 'package:taskify/widgets/text_fields.dart';
+export 'package:provider/provider.dart';
+export 'package:taskify/features/auth/view%20model/auth_view_model.dart';
+export 'package:taskify/widgets/buttons.dart';
+export 'package:taskify/features/auth/view/register.dart';
