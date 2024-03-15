@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:taskify/utils/exports.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -10,6 +8,8 @@ class LoginScreen extends StatelessWidget {
     final formKey = GlobalKey<FormState>();
     final theme = Theme.of(context).colorScheme;
     final authProvider = context.watch<AuthProvider>();
+    authProvider.emailController.text = "ravan@gmail.com";
+    authProvider.passwordController.text = "ravan@1234";
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20),

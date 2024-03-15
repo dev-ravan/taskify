@@ -19,6 +19,7 @@ dependencies:
   provider: ^6.1.2
   flutter_svg: ^2.0.10+1
   google_fonts: ^6.2.1
+  easy_date_timeline: ^1.0.6
 
 dev_dependencies:
   flutter_test:
@@ -32,4 +33,5 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/vector_images/
+    - assets/
 

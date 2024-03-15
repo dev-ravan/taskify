@@ -1,3 +1,4 @@
+import 'package:taskify/features/list%20of%20tasks/home.dart';
 import 'package:taskify/utils/exports.dart';
 
 class AuthProvider extends ChangeNotifier {
@@ -9,8 +10,8 @@ class AuthProvider extends ChangeNotifier {
   bool isObscure = true;
 
   // Text Editing Controllers
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   final email = FormItems(
       fieldName: "Email ID",
@@ -60,7 +61,10 @@ class AuthProvider extends ChangeNotifier {
   void submitLoginForm(BuildContext context, GlobalKey<FormState> formKey) {
     if (formKey.currentState!.validate()) {
       setLoginLoading(true);
-
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          (route) => false);
       setLoginLoading(false);
     }
   }
@@ -77,9 +81,9 @@ class AuthProvider extends ChangeNotifier {
   final registerDesc = "Create your account";
 
   // Text Editing Controllers
-  final regEmailController = TextEditingController();
-  final regPasswordController = TextEditingController();
-  final userNameController = TextEditingController();
+  TextEditingController regEmailController = TextEditingController();
+  TextEditingController regPasswordController = TextEditingController();
+  TextEditingController userNameController = TextEditingController();
 
   // Form Items
   final userName = FormItems(

@@ -1,3 +1,4 @@
+import 'package:taskify/common/splash.dart';
 import 'package:taskify/utils/exports.dart';
 
 void main() {
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
         title: 'Taskify',
         theme: lightTheme,
         debugShowCheckedModeBanner: false,
-        home: const LoginScreen(),
+        home: const SplashScreen(),
       ),
     );
   }
