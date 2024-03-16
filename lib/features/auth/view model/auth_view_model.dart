@@ -1,4 +1,4 @@
-import 'package:taskify/features/list%20of%20tasks/home.dart';
+import 'package:taskify/features/list%20of%20tasks/view/home.dart';
 import 'package:taskify/utils/exports.dart';
 
 class AuthProvider extends ChangeNotifier {
