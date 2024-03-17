@@ -1,8 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:taskify/common/splash.dart';
 import 'package:taskify/features/list%20of%20tasks/view%20model/home_vm.dart';
 import 'package:taskify/utils/exports.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -16,6 +19,8 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
         ChangeNotifierProvider<HomeProvider>(create: (_) => HomeProvider()),
+        ChangeNotifierProvider<AddNewTaskProvider>(
+            create: (_) => AddNewTaskProvider()),
       ],
       child: MaterialApp(
         title: 'Taskify',

@@ -13,3 +13,5 @@ export 'package:provider/provider.dart';
 export 'package:taskify/features/auth/view%20model/auth_view_model.dart';
 export 'package:taskify/widgets/buttons.dart';
 export 'package:taskify/features/auth/view/register.dart';
+export 'package:taskify/features/add%20new%20task/view%20model/add_task_vm.dart';
+export 'package:taskify/features/list%20of%20tasks/view/home.dart';

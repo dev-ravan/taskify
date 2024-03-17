@@ -1,4 +1,5 @@
 import 'package:easy_date_timeline/easy_date_timeline.dart';
+import 'package:flutter/material.dart';
 import 'package:taskify/features/list%20of%20tasks/view%20model/home_vm.dart';
 import 'package:taskify/utils/exports.dart';
 
@@ -8,16 +9,15 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
-
+    final provider = context.watch<HomeProvider>();
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => provider.addNewTaskRoute(context),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
         child: const Icon(Icons.add),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          physics: const NeverScrollableScrollPhysics(),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Column(
@@ -138,8 +138,8 @@ class HomeScreen extends StatelessWidget {
         myTexts.med24dmSans(text: provider.formattedDate, context: context),
         gapH(30),
         ListView.builder(
-          itemCount: provider.taskList.length,
           shrinkWrap: true,
+          itemCount: provider.taskList.length,
           itemBuilder: (BuildContext context, int i) {
             return _roundedCheckBoxListTile(
               context: context,

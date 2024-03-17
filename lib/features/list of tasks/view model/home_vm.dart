@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:taskify/features/add%20new%20task/view/add_new_task.dart';
 import 'package:taskify/model/tasks_model.dart';
 import 'package:taskify/utils/exports.dart';
 
@@ -15,6 +16,12 @@ class HomeProvider extends ChangeNotifier {
 // this method update state of the task checked or not
   taskStatusChange() {
     notifyListeners();
+  }
+
+// Navigate to add new task
+  addNewTaskRoute(BuildContext context) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const AddNewTaskScreen()));
   }
 
 // Task List
