@@ -1,7 +1,10 @@
-import 'package:taskify/features/list%20of%20tasks/view/home.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:taskify/features/auth/repository/auth_repo.dart';
 import 'package:taskify/utils/exports.dart';
 
 class AuthProvider extends ChangeNotifier {
+  // Firebase auth service
+  AuthRepo authService = AuthRepo();
   // ! [ Login Section Data ]
 
   final loginTitle = "Login";
@@ -44,7 +47,7 @@ class AuthProvider extends ChangeNotifier {
 
   String? passwordValidation(String? val) => val!.isEmpty
       ? password.errorMsg
-      : val.length <= 8
+      : val.length <= 7
           ? "Password should be 8 digits"
           : null;
 
@@ -61,10 +64,18 @@ class AuthProvider extends ChangeNotifier {
   void submitLoginForm(BuildContext context, GlobalKey<FormState> formKey) {
     if (formKey.currentState!.validate()) {
       setLoginLoading(true);
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-          (route) => false);
+      authService.signIn(
+          emailController.text.trim(), passwordController.text.trim());
+
+      authService.authStateChanges.listen((User? user) {
+        if (user != null) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+              (route) => false);
+        }
+      });
+
       setLoginLoading(false);
     }
   }

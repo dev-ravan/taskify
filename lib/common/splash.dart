@@ -1,3 +1,4 @@
+import 'package:taskify/features/auth/view/auth_screen.dart';
 import 'package:taskify/utils/exports.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -13,7 +14,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(milliseconds: 500), () {
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          MaterialPageRoute(builder: (context) => const AuthScreen()),
           (route) => false);
     });
     super.initState();

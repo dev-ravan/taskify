@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:taskify/utils/exports.dart';
 
 class RegisterScreen extends StatelessWidget {

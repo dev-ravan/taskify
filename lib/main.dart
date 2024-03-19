@@ -1,11 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:taskify/common/splash.dart';
 import 'package:taskify/features/list%20of%20tasks/view%20model/home_vm.dart';
+import 'package:taskify/firebase_options.dart';
 import 'package:taskify/utils/exports.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
