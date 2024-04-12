@@ -1,5 +1,4 @@
 import 'package:easy_date_timeline/easy_date_timeline.dart';
-import 'package:flutter/material.dart';
 import 'package:taskify/Data/hive_data_store.dart';
 import 'package:taskify/features/list%20of%20tasks/view%20model/home_vm.dart';
 import 'package:taskify/utils/exports.dart';
@@ -60,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-//* Name and  Profile
+//* Name and  profile
   Widget _buildNameAndProfile(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
     return Row(
@@ -84,9 +83,9 @@ class _HomeScreenState extends State<HomeScreen> {
               context: context,
               builder: (context) => Theme(
                 data: ThemeData(
-                    dialogTheme:
-                        DialogTheme(backgroundColor: theme.background)),
-                child: AlertDialog.adaptive(
+                  dialogTheme: DialogTheme(backgroundColor: theme.background),
+                ),
+                child: AlertDialog(
                   title: Row(
                     children: [
                       const Icon(Icons.logout_outlined),
@@ -98,9 +97,24 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   content: myTexts.med16dmSans(
-                    text: "Are you sure, want to logout?",
-                    context: context,
-                  ),
+                      text: "Are you sure, want to logout?",
+                      context: context,
+                      alterColor: theme.secondary),
+                  actions: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        OutlineCustomButton(title: "Logout", onTap: () {}),
+                        gap(10),
+                        ElevateCustomButton(
+                          title: "Cancel",
+                          onTap: () => Navigator.pop(context),
+                          contentColor: theme.secondaryContainer,
+                          bgColor: theme.primary,
+                        )
+                      ],
+                    )
+                  ],
                 ),
               ),
             );
