@@ -1,4 +1,5 @@
 import 'package:easy_date_timeline/easy_date_timeline.dart';
+import 'package:flutter/material.dart';
 import 'package:taskify/Data/hive_data_store.dart';
 import 'package:taskify/features/list%20of%20tasks/view%20model/home_vm.dart';
 import 'package:taskify/utils/exports.dart';
@@ -77,12 +78,40 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         // Profile
-        CircleAvatar(
-          backgroundColor: theme.tertiary,
-          radius: 26,
-          child: const CircleAvatar(
-            backgroundImage: AssetImage(profileImg),
-            radius: 25,
+        InkWell(
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (context) => Theme(
+                data: ThemeData(
+                    dialogTheme:
+                        DialogTheme(backgroundColor: theme.background)),
+                child: AlertDialog.adaptive(
+                  title: Row(
+                    children: [
+                      const Icon(Icons.logout_outlined),
+                      gapW(10),
+                      myTexts.bold18dmSans(
+                          text: "Logout",
+                          context: context,
+                          alterColor: theme.secondary)
+                    ],
+                  ),
+                  content: myTexts.med16dmSans(
+                    text: "Are you sure, want to logout?",
+                    context: context,
+                  ),
+                ),
+              ),
+            );
+          },
+          child: CircleAvatar(
+            backgroundColor: theme.tertiary,
+            radius: 26,
+            child: const CircleAvatar(
+              backgroundImage: AssetImage(profileImg),
+              radius: 25,
+            ),
           ),
         )
       ],
