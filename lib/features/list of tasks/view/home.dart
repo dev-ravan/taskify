@@ -1,9 +1,24 @@
 import 'package:easy_date_timeline/easy_date_timeline.dart';
+import 'package:taskify/Data/hive_data_store.dart';
 import 'package:taskify/features/list%20of%20tasks/view%20model/home_vm.dart';
 import 'package:taskify/utils/exports.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  //  Task box
+  late Box<Tasks> box;
+
+  @override
+  void initState() {
+    box = Hive.box(HiveDataStore.boxName);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +31,10 @@ class HomeScreen extends StatelessWidget {
         child: const Icon(Icons.add),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          child: SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -129,35 +145,53 @@ class HomeScreen extends StatelessWidget {
     final provider = context.watch<HomeProvider>();
     final theme = Theme.of(context).colorScheme;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        myTexts.med16dmSans(
-            text: "Tasks on", context: context, alterColor: theme.tertiary),
-        myTexts.med24dmSans(text: provider.formattedDate, context: context),
-        gapH(30),
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: provider.taskList.length,
-          itemBuilder: (BuildContext context, int i) {
-            return _roundedCheckBoxListTile(
-              context: context,
-              isChecked: provider.taskList[i].isChecked,
-              task: provider.taskList[i].task,
-              subTask: provider.taskList[i].subTask,
-              onChanged: (bool? val) {
-                provider.taskList[i].isChecked = val!;
-                provider.taskStatusChange();
-              },
-            );
-          },
-        )
-      ],
-    );
+    return ValueListenableBuilder(
+        valueListenable: HiveDataStore().listenToTask(),
+        builder: (context, Box<Tasks> box, child) {
+          // Reverse the list  for previous tasks shown on top
+          var tasks = box.values.toList().reversed.toList();
+          tasks.sort(((a, b) =>
+              a.isComplete.toString().compareTo(b.isComplete.toString())));
+
+          // Selected date tasks only showing
+          tasks = tasks
+              .where((task) => task.date == provider.selectedDate)
+              .toList();
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              myTexts.med16dmSans(
+                  text: "Tasks on",
+                  context: context,
+                  alterColor: theme.tertiary),
+              myTexts.med24dmSans(
+                  text: provider.formattedDate, context: context),
+              gapH(30),
+              ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                itemCount: tasks.length,
+                itemBuilder: (BuildContext context, int i) {
+                  var task = tasks[i];
+                  return _roundedCheckBoxListTile(
+                    context: context,
+                    isChecked: task.isComplete,
+                    task: task.task,
+                    subTask: task.subTask,
+                    onChanged: (bool? val) {
+                      task.isComplete = val!;
+                      provider.taskStatusChange();
+                    },
+                  );
+                },
+              )
+            ],
+          );
+        });
   }
 
 // List tile checkbox container
-
   Widget _roundedCheckBoxListTile(
       {required BuildContext context,
       required bool isChecked,

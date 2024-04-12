@@ -1,10 +1,25 @@
+import 'package:intl/intl.dart';
+import 'package:taskify/Data/hive_data_store.dart';
 import 'package:taskify/utils/exports.dart';
 
 class AddNewTaskProvider extends ChangeNotifier {
+// Hive Data Box
+  final hiveDataStore = HiveDataStore();
+
 // Text Editing Controllers
   TextEditingController taskController = TextEditingController();
   TextEditingController subTaskController = TextEditingController();
   TextEditingController dateController = TextEditingController();
+
+  DateTime selectedDate = DateTime.now();
+
+  // Change the selected date format
+  changeDateFormat({required DateTime date}) {
+    final format = DateFormat("dd-MM-yyyy");
+    dateController.text = format.format(date);
+    selectedDate = date;
+    notifyListeners();
+  }
 
   // Form Items
   final task = FormItems(
@@ -42,6 +57,15 @@ class AddNewTaskProvider extends ChangeNotifier {
   void submitForm(BuildContext context, GlobalKey<FormState> formKey) {
     if (formKey.currentState!.validate()) {
       setLoginLoading(true);
+      final newTask = Tasks(
+          id: const Uuid().v1(),
+          task: taskController.text.trim(),
+          subTask: subTaskController.text.trim(),
+          date: selectedDate,
+          isComplete: false);
+
+      hiveDataStore.createTask(tasks: newTask);
+      hiveDataStore.getTasks(id: "1");
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const HomeScreen()),
