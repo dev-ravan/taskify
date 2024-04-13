@@ -1,6 +1,3 @@
-import 'package:easy_date_timeline/easy_date_timeline.dart';
-import 'package:taskify/Data/hive_data_store.dart';
-import 'package:taskify/features/list%20of%20tasks/view%20model/home_vm.dart';
 import 'package:taskify/utils/exports.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
+          padding: const EdgeInsets.symmetric(horizontal: 25),
           child: SingleChildScrollView(
             physics: const NeverScrollableScrollPhysics(),
             child: Column(
@@ -61,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 //* Name and  profile
   Widget _buildNameAndProfile(BuildContext context) {
+    final provider = context.watch<AuthProvider>();
     final theme = Theme.of(context).colorScheme;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -77,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         // Profile
-        InkWell(
+        GestureDetector(
           onTap: () {
             showDialog(
               context: context,
@@ -104,7 +102,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        OutlineCustomButton(title: "Logout", onTap: () {}),
+                        OutlineCustomButton(
+                            title: "Logout",
+
+                            // Log out
+                            onTap: () {
+                              provider.logOutAccount();
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const LoginScreen(),
+                                  ),
+                                  (route) => false);
+                            }),
                         gap(10),
                         ElevateCustomButton(
                           title: "Cancel",
@@ -120,13 +130,13 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           },
           child: CircleAvatar(
-            backgroundColor: theme.tertiary,
-            radius: 26,
-            child: const CircleAvatar(
-              backgroundImage: AssetImage(profileImg),
-              radius: 25,
-            ),
-          ),
+              backgroundColor: Colors.black12,
+              radius: 20,
+              child: Icon(
+                Icons.logout_outlined,
+                color: theme.secondary,
+                size: 20,
+              )),
         )
       ],
     );
@@ -197,9 +207,9 @@ class _HomeScreenState extends State<HomeScreen> {
               a.isComplete.toString().compareTo(b.isComplete.toString())));
 
           // Selected date tasks only showing
-          tasks = tasks
-              .where((task) => task.date == provider.selectedDate)
-              .toList();
+          tasks = tasks.where((task) {
+            return task.date == provider.getSelectedDateWithoutTime();
+          }).toList();
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,27 +221,73 @@ class _HomeScreenState extends State<HomeScreen> {
               myTexts.med24dmSans(
                   text: provider.formattedDate, context: context),
               gapH(30),
-              ListView.builder(
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                itemCount: tasks.length,
-                itemBuilder: (BuildContext context, int i) {
-                  var task = tasks[i];
-                  return _roundedCheckBoxListTile(
-                    context: context,
-                    isChecked: task.isComplete,
-                    task: task.task,
-                    subTask: task.subTask,
-                    onChanged: (bool? val) {
-                      task.isComplete = val!;
-                      provider.taskStatusChange();
-                    },
-                  );
-                },
-              )
+              tasks.isNotEmpty
+                  ? _buildListOfTask(tasks, provider)
+                  : _buildEmptyDataImg(context)
             ],
           );
         });
+  }
+
+  Center _buildEmptyDataImg(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          gapH(20),
+          SvgPicture.asset(
+            emptyImg,
+            width: 300,
+          ),
+          gapH(20),
+          myTexts.med16dmSans(text: "No tasks available..!", context: context)
+        ],
+      ),
+    );
+  }
+
+  ListView _buildListOfTask(List<Tasks> tasks, HomeProvider provider) {
+    return ListView.builder(
+      shrinkWrap: true,
+      scrollDirection: Axis.vertical,
+      itemCount: tasks.length,
+      itemBuilder: (BuildContext context, int i) {
+        var task = tasks[i];
+        return Dismissible(
+          direction: DismissDirection.horizontal,
+          background: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.delete_outline,
+                color: Colors.red[200],
+              ),
+              const SizedBox(
+                width: 8,
+              ),
+              myTexts.med16dmSans(text: "Delete Task", context: context)
+            ],
+          ),
+          onDismissed: (direction) {
+            // Delete task from hive box
+            HiveDataStore().dalateTask(task: task);
+          },
+          key: Key(task.id),
+          child: _roundedCheckBoxListTile(
+            context: context,
+            isChecked: task.isComplete,
+            task: task.task,
+            subTask: task.subTask,
+            onChanged: (bool? val) {
+              task.isComplete = val!;
+
+              // Update the task
+              HiveDataStore().updateTask(task: task);
+              provider.taskStatusChange();
+            },
+          ),
+        );
+      },
+    );
   }
 
 // List tile checkbox container

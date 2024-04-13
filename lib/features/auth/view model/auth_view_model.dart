@@ -80,6 +80,12 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  // Sign Out
+  logOutAccount() {
+    authService.signOut();
+    notifyListeners();
+  }
+
   // ? Register Button
   void registerClick(BuildContext context) {
     Navigator.push(context,
@@ -90,6 +96,15 @@ class AuthProvider extends ChangeNotifier {
 
   final registerTitle = "Register";
   final registerDesc = "Create your account";
+
+  // Register loading state
+  bool isRegLoad = false;
+
+  // It changes the loading state
+  setRegLoading(bool loading) async {
+    isRegLoad = loading;
+    notifyListeners();
+  }
 
   // Text Editing Controllers
   TextEditingController regEmailController = TextEditingController();
@@ -105,4 +120,23 @@ class AuthProvider extends ChangeNotifier {
 // Validation
   String? userNameValidation(String? val) =>
       val!.isEmpty ? userName.errorMsg : null;
+
+// Register the user to fire store
+  void userRegister(BuildContext context, GlobalKey<FormState> formKey) {
+    if (formKey.currentState!.validate()) {
+      setRegLoading(true);
+      authService.userRegister(userNameController.text.trim(),
+          regEmailController.text.trim(), regPasswordController.text.trim());
+
+      authService.authStateChanges.listen((User? user) {
+        if (user != null) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+              (route) => false);
+        }
+      });
+      setRegLoading(false);
+    }
+  }
 }

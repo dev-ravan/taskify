@@ -13,9 +13,19 @@ class HiveDataStore {
     await box.put(tasks.id, tasks);
   }
 
-  // Get Tasks
+  // Show Tasks
   Future<Tasks?> getTasks({required String id}) async {
     return box.get(id);
+  }
+
+  // Update task
+  Future<void> updateTask({required Tasks task}) async {
+    await task.save();
+  }
+
+  // Delete task
+  Future<void> dalateTask({required Tasks task}) async {
+    await task.delete();
   }
 
   // Listen task changes

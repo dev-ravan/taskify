@@ -4,6 +4,11 @@ import 'package:taskify/utils/exports.dart';
 
 class HomeProvider extends ChangeNotifier {
   DateTime selectedDate = DateTime.now();
+
+  DateTime getSelectedDateWithoutTime() {
+    return DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+  }
+
   String formattedDate = DateFormat('EEEE d MMM').format(DateTime.now());
 
 // change date format

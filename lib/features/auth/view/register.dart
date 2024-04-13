@@ -76,7 +76,7 @@ class RegisterScreen extends StatelessWidget {
 
               gapH(30),
               MyButton(
-                onTap: () => authProvider.submitLoginForm(context, formKey),
+                onTap: () => authProvider.userRegister(context, formKey),
                 title: authProvider.registerTitle,
               ),
               gapH(10),

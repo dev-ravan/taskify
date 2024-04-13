@@ -1,15 +1,19 @@
 import 'package:taskify/utils/exports.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final formKey = GlobalKey<FormState>();
+
+  @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
     final theme = Theme.of(context).colorScheme;
     final authProvider = context.watch<AuthProvider>();
-    authProvider.emailController.text = "ravan@gmail.com";
-    authProvider.passwordController.text = "ravan@123";
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20),
