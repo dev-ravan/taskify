@@ -1,7 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:taskify/Data/hive_data_store.dart';
 import 'package:taskify/common/splash.dart';
-import 'package:taskify/features/list%20of%20tasks/view%20model/home_vm.dart';
 import 'package:taskify/firebase_options.dart';
 import 'package:taskify/utils/exports.dart';
 
@@ -12,11 +10,11 @@ void main() async {
 // Initialize hive db before run the app
   await Hive.initFlutter();
 
-  // Register hive adopter
-  Hive.registerAdapter<Tasks>(TasksAdapter());
+  // Hive Register Adopters
+  Hive.registerAdapter<Tasks>(TasksAdapter()); //Task
 
-  // Open the tasks box
-  await Hive.openBox<Tasks>(HiveDataStore.boxName);
+  // Open Box
+  await Hive.openBox<Tasks>(HiveDataStore.boxName); //Task
 
   runApp(const MyApp());
 }
@@ -29,7 +27,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
+        ChangeNotifierProvider<AuthViewModel>(create: (_) => AuthViewModel()),
         ChangeNotifierProvider<HomeProvider>(create: (_) => HomeProvider()),
         ChangeNotifierProvider<AddNewTaskProvider>(
             create: (_) => AddNewTaskProvider()),

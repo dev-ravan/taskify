@@ -1,13 +1,18 @@
 import 'package:taskify/utils/exports.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  final formKey = GlobalKey<FormState>();
+  @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
     final theme = Theme.of(context).colorScheme;
-    final authProvider = context.watch<AuthProvider>();
+    final authProvider = context.watch<AuthViewModel>();
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20),

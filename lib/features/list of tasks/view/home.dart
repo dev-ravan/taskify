@@ -1,3 +1,9 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:taskify/common/constants.dart';
 import 'package:taskify/utils/exports.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -58,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 //* Name and  profile
   Widget _buildNameAndProfile(BuildContext context) {
-    final provider = context.watch<AuthProvider>();
+    final provider = context.watch<AuthViewModel>();
     final theme = Theme.of(context).colorScheme;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -71,7 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: "Welcome Back!",
                 context: context,
                 alterColor: theme.tertiary),
-            myTexts.med24dmSans(text: "Danial Alexander", context: context),
+            myTexts.med24dmSans(
+                text: globalUserName ?? "Not Defined", context: context),
           ],
         ),
         // Profile
@@ -84,6 +91,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   dialogTheme: DialogTheme(backgroundColor: theme.background),
                 ),
                 child: AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   title: Row(
                     children: [
                       const Icon(Icons.logout_outlined),
@@ -95,34 +105,28 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   content: myTexts.med16dmSans(
-                      text: "Are you sure, want to logout?",
+                      text: "Are you sure, you want to logout?",
                       context: context,
                       alterColor: theme.secondary),
                   actions: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        OutlineCustomButton(
-                            title: "Logout",
+                    OutlineCustomButton(
+                        title: "Logout",
 
-                            // Log out
-                            onTap: () {
-                              provider.logOutAccount();
-                              Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const LoginScreen(),
-                                  ),
-                                  (route) => false);
-                            }),
-                        gap(10),
-                        ElevateCustomButton(
-                          title: "Cancel",
-                          onTap: () => Navigator.pop(context),
-                          contentColor: theme.secondaryContainer,
-                          bgColor: theme.primary,
-                        )
-                      ],
+                        // Log out
+                        onTap: () {
+                          provider.logOutAccount();
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LoginScreen(),
+                              ),
+                              (route) => false);
+                        }),
+                    ElevateCustomButton(
+                      title: "Cancel",
+                      onTap: () => Navigator.pop(context),
+                      contentColor: theme.secondaryContainer,
+                      bgColor: theme.primary,
                     )
                   ],
                 ),

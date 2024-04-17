@@ -13,7 +13,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
-    final authProvider = context.watch<AuthProvider>();
+    final authProvider = context.watch<AuthViewModel>();
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20),

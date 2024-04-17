@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:taskify/common/constants.dart';
 import 'package:taskify/features/auth/repository/auth_repo.dart';
 import 'package:taskify/utils/exports.dart';
 
-class AuthProvider extends ChangeNotifier {
+class AuthViewModel extends ChangeNotifier {
   // Firebase auth service
   AuthRepo authService = AuthRepo();
   // ! [ Login Section Data ]
@@ -64,16 +67,24 @@ class AuthProvider extends ChangeNotifier {
   void submitLoginForm(BuildContext context, GlobalKey<FormState> formKey) {
     if (formKey.currentState!.validate()) {
       setLoginLoading(true);
-      authService.signIn(
-          emailController.text.trim(), passwordController.text.trim());
-
-      authService.authStateChanges.listen((User? user) {
-        if (user != null) {
+      authService
+          .signIn(emailController.text.trim(), passwordController.text.trim())
+          .whenComplete(() {
+        if (globalUserName != "") {
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const HomeScreen()),
               (route) => false);
+        } else {
+          log("User Not Defined");
         }
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            (route) => false);
+
+        emailController.clear();
+        passwordController.clear();
       });
 
       setLoginLoading(false);
