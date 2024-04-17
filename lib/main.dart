@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:taskify/common/splash.dart';
 import 'package:taskify/firebase_options.dart';
@@ -7,14 +8,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+// Get data from the cache
+  FirebaseFirestore.instance.settings =
+      const Settings(persistenceEnabled: true);
+
 // Initialize hive db before run the app
   await Hive.initFlutter();
-
-  // Hive Register Adopters
-  Hive.registerAdapter<Tasks>(TasksAdapter()); //Task
-
-  // Open Box
-  await Hive.openBox<Tasks>(HiveDataStore.boxName); //Task
 
   runApp(const MyApp());
 }

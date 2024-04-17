@@ -1,11 +1,7 @@
 import 'package:intl/intl.dart';
-import 'package:taskify/Data/hive_data_store.dart';
 import 'package:taskify/utils/exports.dart';
 
 class AddNewTaskProvider extends ChangeNotifier {
-// Hive Data Box
-  final hiveDataStore = HiveDataStore();
-
 // Text Editing Controllers
   TextEditingController taskController = TextEditingController();
   TextEditingController subTaskController = TextEditingController();
@@ -59,16 +55,16 @@ class AddNewTaskProvider extends ChangeNotifier {
       setLoginLoading(true);
 
       try {
-        // Task payload model
-        final newTask = Tasks(
-            id: const Uuid().v1(),
-            task: taskController.text.trim(),
-            subTask: subTaskController.text.trim(),
-            date: selectedDate,
-            isComplete: false);
+        // // Task payload model
+        // final newTask = Tasks(
+        //     id: const Uuid().v1(),
+        //     task: taskController.text.trim(),
+        //     subTask: subTaskController.text.trim(),
+        //     date: selectedDate,
+        //     isComplete: false);
 
-        // Add task to hive box
-        hiveDataStore.createTask(tasks: newTask);
+        // // Add task to hive box
+        // hiveDataStore.createTask(tasks: newTask);
 
         // After this screen will navigate to home
         Navigator.pushAndRemoveUntil(

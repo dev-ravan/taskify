@@ -1,8 +1,3 @@
-import 'dart:developer';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskify/common/constants.dart';
 import 'package:taskify/utils/exports.dart';
 
@@ -14,12 +9,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  //  Task box
-  late Box<Tasks> box;
-
   @override
   void initState() {
-    box = Hive.box(HiveDataStore.boxName);
     super.initState();
   }
 
@@ -201,36 +192,20 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildTasksOnDate(BuildContext context) {
     final provider = context.watch<HomeProvider>();
     final theme = Theme.of(context).colorScheme;
+    List tasks = [];
 
-    return ValueListenableBuilder(
-        valueListenable: HiveDataStore().listenToTask(),
-        builder: (context, Box<Tasks> box, child) {
-          // Reverse the list  for previous tasks shown on top
-          var tasks = box.values.toList().reversed.toList();
-          tasks.sort(((a, b) =>
-              a.isComplete.toString().compareTo(b.isComplete.toString())));
-
-          // Selected date tasks only showing
-          tasks = tasks.where((task) {
-            return task.date == provider.getSelectedDateWithoutTime();
-          }).toList();
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              myTexts.med16dmSans(
-                  text: "Tasks on",
-                  context: context,
-                  alterColor: theme.tertiary),
-              myTexts.med24dmSans(
-                  text: provider.formattedDate, context: context),
-              gapH(30),
-              tasks.isNotEmpty
-                  ? _buildListOfTask(tasks, provider)
-                  : _buildEmptyDataImg(context)
-            ],
-          );
-        });
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        myTexts.med16dmSans(
+            text: "Tasks on", context: context, alterColor: theme.tertiary),
+        myTexts.med24dmSans(text: provider.formattedDate, context: context),
+        gapH(30),
+        // tasks.isNotEmpty
+        //     ? _buildListOfTask(tasks, provider)
+        //     : _buildEmptyDataImg(context)
+      ],
+    );
   }
 
   Center _buildEmptyDataImg(BuildContext context) {
@@ -249,50 +224,50 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  ListView _buildListOfTask(List<Tasks> tasks, HomeProvider provider) {
-    return ListView.builder(
-      shrinkWrap: true,
-      scrollDirection: Axis.vertical,
-      itemCount: tasks.length,
-      itemBuilder: (BuildContext context, int i) {
-        var task = tasks[i];
-        return Dismissible(
-          direction: DismissDirection.horizontal,
-          background: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.delete_outline,
-                color: Colors.red[200],
-              ),
-              const SizedBox(
-                width: 8,
-              ),
-              myTexts.med16dmSans(text: "Delete Task", context: context)
-            ],
-          ),
-          onDismissed: (direction) {
-            // Delete task from hive box
-            HiveDataStore().dalateTask(task: task);
-          },
-          key: Key(task.id),
-          child: _roundedCheckBoxListTile(
-            context: context,
-            isChecked: task.isComplete,
-            task: task.task,
-            subTask: task.subTask,
-            onChanged: (bool? val) {
-              task.isComplete = val!;
+  // ListView _buildListOfTask(List<Tasks> tasks, HomeProvider provider) {
+  //   return ListView.builder(
+  //     shrinkWrap: true,
+  //     scrollDirection: Axis.vertical,
+  //     itemCount: tasks.length,
+  //     itemBuilder: (BuildContext context, int i) {
+  //       var task = tasks[i];
+  //       return Dismissible(
+  //         direction: DismissDirection.horizontal,
+  //         background: Row(
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             Icon(
+  //               Icons.delete_outline,
+  //               color: Colors.red[200],
+  //             ),
+  //             const SizedBox(
+  //               width: 8,
+  //             ),
+  //             myTexts.med16dmSans(text: "Delete Task", context: context)
+  //           ],
+  //         ),
+  //         onDismissed: (direction) {
+  //           // Delete task from hive box
+  //           HiveDataStore().dalateTask(task: task);
+  //         },
+  //         key: Key(task.id),
+  //         child: _roundedCheckBoxListTile(
+  //           context: context,
+  //           isChecked: task.isComplete,
+  //           task: task.task,
+  //           subTask: task.subTask,
+  //           onChanged: (bool? val) {
+  //             task.isComplete = val!;
 
-              // Update the task
-              HiveDataStore().updateTask(task: task);
-              provider.taskStatusChange();
-            },
-          ),
-        );
-      },
-    );
-  }
+  //             // Update the task
+  //             HiveDataStore().updateTask(task: task);
+  //             provider.taskStatusChange();
+  //           },
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
 // List tile checkbox container
   Widget _roundedCheckBoxListTile(

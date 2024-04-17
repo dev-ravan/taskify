@@ -40,7 +40,7 @@ class AddNewTaskScreen extends StatelessWidget {
                       initialDate: DateTime.now(),
                       lastDate: DateTime(2100),
                     );
-
+                    print(datePick);
                     provider.changeDateFormat(date: datePick!);
                   },
                 ),

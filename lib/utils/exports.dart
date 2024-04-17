@@ -19,7 +19,6 @@ export 'package:taskify/features/list%20of%20tasks/view/home.dart';
 export 'package:hive/hive.dart';
 export 'package:hive_flutter/hive_flutter.dart';
 export 'package:uuid/uuid.dart';
-export 'package:taskify/model/tasks.dart';
 export 'package:easy_date_timeline/easy_date_timeline.dart';
 export 'package:taskify/Data/hive_data_store.dart';
 export 'package:taskify/features/list%20of%20tasks/view%20model/home_vm.dart';
