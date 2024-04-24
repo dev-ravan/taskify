@@ -31,5 +31,6 @@
   
     "editor.codeActionsOnSave": {
       "source.fixAll": "explicit"
-    }
+    },
+    "cmake.sourceDirectory": "D:/My Tasks/Flutter Tasks/Personel Projects/taskify/linux"
   }

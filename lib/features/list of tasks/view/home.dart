@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:taskify/Data/firebase_db.dart';
 import 'package:taskify/common/constants.dart';
+import 'package:taskify/model/tasks.dart';
 import 'package:taskify/utils/exports.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -9,6 +12,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // Firebase db
+  FirebaseService dbService = FirebaseService();
+
   @override
   void initState() {
     super.initState();
@@ -192,7 +198,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildTasksOnDate(BuildContext context) {
     final provider = context.watch<HomeProvider>();
     final theme = Theme.of(context).colorScheme;
-    List tasks = [];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,14 +206,12 @@ class _HomeScreenState extends State<HomeScreen> {
             text: "Tasks on", context: context, alterColor: theme.tertiary),
         myTexts.med24dmSans(text: provider.formattedDate, context: context),
         gapH(30),
-        // tasks.isNotEmpty
-        //     ? _buildListOfTask(tasks, provider)
-        //     : _buildEmptyDataImg(context)
+        _buildListOfTask()
       ],
     );
   }
 
-  Center _buildEmptyDataImg(BuildContext context) {
+  Center _buildEmptyDataImg() {
     return Center(
       child: Column(
         children: [
@@ -224,50 +227,66 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ListView _buildListOfTask(List<Tasks> tasks, HomeProvider provider) {
-  //   return ListView.builder(
-  //     shrinkWrap: true,
-  //     scrollDirection: Axis.vertical,
-  //     itemCount: tasks.length,
-  //     itemBuilder: (BuildContext context, int i) {
-  //       var task = tasks[i];
-  //       return Dismissible(
-  //         direction: DismissDirection.horizontal,
-  //         background: Row(
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: [
-  //             Icon(
-  //               Icons.delete_outline,
-  //               color: Colors.red[200],
-  //             ),
-  //             const SizedBox(
-  //               width: 8,
-  //             ),
-  //             myTexts.med16dmSans(text: "Delete Task", context: context)
-  //           ],
-  //         ),
-  //         onDismissed: (direction) {
-  //           // Delete task from hive box
-  //           HiveDataStore().dalateTask(task: task);
-  //         },
-  //         key: Key(task.id),
-  //         child: _roundedCheckBoxListTile(
-  //           context: context,
-  //           isChecked: task.isComplete,
-  //           task: task.task,
-  //           subTask: task.subTask,
-  //           onChanged: (bool? val) {
-  //             task.isComplete = val!;
+  Widget _buildListOfTask() {
+    final provider = context.watch<HomeProvider>();
+    return StreamBuilder(
+        stream: dbService.getTasks(),
+        builder: (context, snapshot) {
+          List tasks = snapshot.data?.docs
+                  .where((data) =>
+                      data["taskOnDate"] ==
+                      Timestamp.fromDate(provider.selectedDate))
+                  .toList() ??
+              [];
+          if (tasks.isEmpty) {
+            return Center(
+              child: _buildEmptyDataImg(),
+            );
+          }
 
-  //             // Update the task
-  //             HiveDataStore().updateTask(task: task);
-  //             provider.taskStatusChange();
-  //           },
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
+          return ListView.builder(
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            itemCount: tasks.length,
+            itemBuilder: (BuildContext context, int i) {
+              Tasks task = tasks[i].data(); // Tasks data
+              String taskId = tasks[i].id;
+              return Dismissible(
+                direction: DismissDirection.horizontal,
+                background: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.delete_outline,
+                      color: Colors.red[200],
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    myTexts.med16dmSans(text: "Delete Task", context: context)
+                  ],
+                ),
+                onDismissed: (direction) {
+                  // Delete task from db
+                  dbService.deleteTask(taskId);
+                },
+                key: Key(taskId),
+                child: _roundedCheckBoxListTile(
+                  context: context,
+                  isChecked: task.isDone,
+                  task: task.task,
+                  subTask: task.subTask,
+                  onChanged: (bool? val) {
+                    task.isDone = val!;
+                    // Update the task
+                    dbService.updateTask(taskId, task);
+                  },
+                ),
+              );
+            },
+          );
+        });
+  }
 
 // List tile checkbox container
   Widget _roundedCheckBoxListTile(

@@ -1,7 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:taskify/Data/firebase_db.dart';
+import 'package:taskify/model/tasks.dart';
 import 'package:taskify/utils/exports.dart';
 
 class AddNewTaskProvider extends ChangeNotifier {
+// Firebase db
+  FirebaseService dbService = FirebaseService();
+
 // Text Editing Controllers
   TextEditingController taskController = TextEditingController();
   TextEditingController subTaskController = TextEditingController();
@@ -55,16 +61,18 @@ class AddNewTaskProvider extends ChangeNotifier {
       setLoginLoading(true);
 
       try {
-        // // Task payload model
-        // final newTask = Tasks(
-        //     id: const Uuid().v1(),
-        //     task: taskController.text.trim(),
-        //     subTask: subTaskController.text.trim(),
-        //     date: selectedDate,
-        //     isComplete: false);
+        // Task payload model
+        final newTask = Tasks(
+          task: taskController.text.trim(),
+          subTask: subTaskController.text.trim(),
+          createdOn: Timestamp.now(),
+          isDone: false,
+          updatedOn: Timestamp.now(),
+          taskOnDate: Timestamp.fromDate(selectedDate),
+        );
 
-        // // Add task to hive box
-        // hiveDataStore.createTask(tasks: newTask);
+        // Add task to hive box
+        dbService.addTask(newTask);
 
         // After this screen will navigate to home
         Navigator.pushAndRemoveUntil(
