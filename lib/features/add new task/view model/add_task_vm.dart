@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-import 'package:taskify/Data/firebase_db.dart';
 import 'package:taskify/model/tasks.dart';
+import 'package:taskify/services/firebase_db.dart';
 import 'package:taskify/utils/exports.dart';
 
 class AddNewTaskProvider extends ChangeNotifier {

@@ -1,11 +1,24 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get_it/get_it.dart';
 import 'package:taskify/common/constants.dart';
 import 'package:taskify/features/auth/repository/auth_repo.dart';
+import 'package:taskify/services/auth_service.dart';
 import 'package:taskify/utils/exports.dart';
+import 'package:taskify/widgets/alert_toast.dart';
 
 class AuthViewModel extends ChangeNotifier {
+// Firebase Auth Service
+  final GetIt _getIt = GetIt.instance;
+  late AuthService _authService;
+
+  AuthViewModel() {
+    _authService = _getIt.get<AuthService>();
+  }
+
   // Firebase auth service
   AuthRepo authService = AuthRepo();
   // ! [ Login Section Data ]
@@ -64,36 +77,56 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   // ? Login Button
-  void submitLoginForm(BuildContext context, GlobalKey<FormState> formKey) {
+  void submitLoginForm(
+      BuildContext context, GlobalKey<FormState> formKey) async {
     if (formKey.currentState!.validate()) {
       setLoginLoading(true);
-      authService
-          .signIn(emailController.text.trim(), passwordController.text.trim())
-          .whenComplete(() {
-        if (globalUserName != "") {
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-              (route) => false);
-        } else {
-          log("User Not Defined");
-        }
+
+      final bool result = await _authService.login(
+          emailController.text.trim(), passwordController.text.trim());
+
+      if (result) {
+        // user is available go to home
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const HomeScreen()),
             (route) => false);
 
+        //  Clear the form
         emailController.clear();
         passwordController.clear();
-      });
+      } else {
+        showToast(
+            message: "Invalid user credentials",
+            context: context,
+            icon: Icons.warning_rounded,
+            iconColor: Colors.red);
+      }
 
       setLoginLoading(false);
     }
   }
 
   // Sign Out
-  logOutAccount() {
-    authService.signOut();
+  logOutAccount(BuildContext context) async {
+    final bool result = await _authService.logOut();
+    if (result) {
+      showToast(
+          message: "Successfullly logged out..!",
+          context: context,
+          icon: Icons.logout_rounded,
+          iconColor: Colors.blue[700]);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          (route) => false);
+    } else {
+      showToast(
+          message: "Something went wrong..!",
+          context: context,
+          icon: Icons.warning_rounded,
+          iconColor: Colors.red);
+    }
     notifyListeners();
   }
 

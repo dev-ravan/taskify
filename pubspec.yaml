@@ -30,6 +30,8 @@ dependencies:
   uuid: ^4.4.0
   svg_flutter: ^0.0.1
   shared_preferences: ^2.2.3
+  get_it: ^7.7.0
+  delightful_toast: ^1.1.0
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:taskify/Data/firebase_db.dart';
+import 'package:taskify/services/firebase_db.dart';
 import 'package:taskify/common/constants.dart';
 import 'package:taskify/model/tasks.dart';
 import 'package:taskify/utils/exports.dart';
@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 context: context,
                 alterColor: theme.tertiary),
             myTexts.med24dmSans(
-                text: globalUserName ?? "Not Defined", context: context),
+                text: globalUserName ?? "Ravan", context: context),
           ],
         ),
         // Profile
@@ -111,13 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         // Log out
                         onTap: () {
-                          provider.logOutAccount();
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const LoginScreen(),
-                              ),
-                              (route) => false);
+                          provider.logOutAccount(context);
                         }),
                     ElevateCustomButton(
                       title: "Cancel",
