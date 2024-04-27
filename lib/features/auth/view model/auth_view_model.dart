@@ -1,12 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:developer';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
-import 'package:taskify/common/constants.dart';
-import 'package:taskify/features/auth/repository/auth_repo.dart';
+import 'package:taskify/model/user_profile.dart';
 import 'package:taskify/services/auth_service.dart';
+import 'package:taskify/services/database_service.dart';
 import 'package:taskify/utils/exports.dart';
 import 'package:taskify/widgets/alert_toast.dart';
 
@@ -14,13 +11,13 @@ class AuthViewModel extends ChangeNotifier {
 // Firebase Auth Service
   final GetIt _getIt = GetIt.instance;
   late AuthService _authService;
+  late DatabaseService _databaseService;
 
   AuthViewModel() {
     _authService = _getIt.get<AuthService>();
+    _databaseService = _getIt.get<DatabaseService>();
   }
 
-  // Firebase auth service
-  AuthRepo authService = AuthRepo();
   // ! [ Login Section Data ]
 
   final loginTitle = "Login";
@@ -112,7 +109,7 @@ class AuthViewModel extends ChangeNotifier {
     final bool result = await _authService.logOut();
     if (result) {
       showToast(
-          message: "Successfullly logged out..!",
+          message: "Successfully logged out..!",
           context: context,
           icon: Icons.logout_rounded,
           iconColor: Colors.blue[700]);
@@ -166,20 +163,42 @@ class AuthViewModel extends ChangeNotifier {
       val!.isEmpty ? userName.errorMsg : null;
 
 // Register the user to fire store
-  void userRegister(BuildContext context, GlobalKey<FormState> formKey) {
+  void userRegister(BuildContext context, GlobalKey<FormState> formKey) async {
     if (formKey.currentState!.validate()) {
       setRegLoading(true);
-      authService.userRegister(userNameController.text.trim(),
+
+      final bool result = await _authService.signUp(
           regEmailController.text.trim(), regPasswordController.text.trim());
 
-      authService.authStateChanges.listen((User? user) {
-        if (user != null) {
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-              (route) => false);
-        }
-      });
+      if (result) {
+        UserProfile userDetails = UserProfile(
+          uid: _authService.user!.uid,
+          name: userNameController.text.trim(),
+        );
+        await _databaseService.addUser(user: userDetails);
+
+        // Success toast msg
+        showToast(
+            message: "Successfully registered..!",
+            context: context,
+            icon: Icons.done_rounded,
+            iconColor: Colors.blue[700]);
+
+        // After user register successfully back to login then go to home
+        Navigator.pop(context);
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            (route) => false);
+      } else {
+        // Register failed toast msg
+        showToast(
+            message: "Failed to register..!",
+            context: context,
+            icon: Icons.warning_rounded,
+            iconColor: Colors.red);
+      }
+
       setRegLoading(false);
     }
   }

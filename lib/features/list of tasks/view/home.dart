@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:taskify/services/firebase_db.dart';
+import 'package:taskify/services/database_service.dart';
 import 'package:taskify/common/constants.dart';
 import 'package:taskify/model/tasks.dart';
 import 'package:taskify/utils/exports.dart';
@@ -13,7 +13,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   // Firebase db
-  FirebaseService dbService = FirebaseService();
+  DatabaseService dbService = DatabaseService();
 
   @override
   void initState() {

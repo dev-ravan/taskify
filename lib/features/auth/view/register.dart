@@ -81,7 +81,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               gapH(30),
               MyButton(
-                onTap: () {},
+                onTap: () => authProvider.userRegister(context, formKey),
                 title: authProvider.registerTitle,
               ),
               gapH(10),
