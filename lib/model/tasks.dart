@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Tasks {
+  String uid;
   String task;
   String subTask;
   bool isDone;
@@ -9,6 +10,7 @@ class Tasks {
   Timestamp updatedOn;
 
   Tasks({
+    required this.uid,
     required this.task,
     required this.subTask,
     required this.isDone,
@@ -18,6 +20,7 @@ class Tasks {
   });
 
   Tasks copyWith({
+    String? uid,
     String? task,
     String? subTask,
     bool? isDone,
@@ -26,6 +29,7 @@ class Tasks {
     Timestamp? updatedOn,
   }) =>
       Tasks(
+        uid: uid ?? this.uid,
         task: task ?? this.task,
         subTask: subTask ?? this.subTask,
         isDone: isDone ?? this.isDone,
@@ -35,6 +39,7 @@ class Tasks {
       );
 
   factory Tasks.fromJson(Map<String, dynamic> json) => Tasks(
+        uid: json["uid"],
         task: json["task"],
         subTask: json["subTask"],
         isDone: json["isDone"],
@@ -44,6 +49,7 @@ class Tasks {
       );
 
   Map<String, dynamic> toJson() => {
+        "uid": uid,
         "task": task,
         "subTask": subTask,
         "isDone": isDone,

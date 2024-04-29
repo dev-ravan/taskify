@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:taskify/services/database_service.dart';
+import 'package:flutter/material.dart';
 import 'package:taskify/common/constants.dart';
 import 'package:taskify/model/tasks.dart';
+import 'package:taskify/model/user_profile.dart';
 import 'package:taskify/utils/exports.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -12,14 +13,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // Firebase db
-  DatabaseService dbService = DatabaseService();
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
@@ -62,22 +55,31 @@ class _HomeScreenState extends State<HomeScreen> {
 //* Name and  profile
   Widget _buildNameAndProfile(BuildContext context) {
     final provider = context.watch<AuthViewModel>();
+    final homeProvider = context.watch<HomeProvider>();
     final theme = Theme.of(context).colorScheme;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // Name
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            myTexts.med16dmSans(
-                text: "Welcome Back!",
-                context: context,
-                alterColor: theme.tertiary),
-            myTexts.med24dmSans(
-                text: globalUserName ?? "Ravan", context: context),
-          ],
-        ),
+        StreamBuilder(
+            stream: homeProvider.getUserStream(),
+            builder: (context, snapshot) {
+              List userDetails = snapshot.data?.docs;
+              if (userDetails.isEmpty) {
+                print("User Not found");
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  myTexts.med16dmSans(
+                      text: "Welcome Back!",
+                      context: context,
+                      alterColor: theme.tertiary),
+                  myTexts.med24dmSans(text: "Null", context: context),
+                ],
+              );
+            }),
         // Profile
         GestureDetector(
           onTap: () {
@@ -224,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildListOfTask() {
     final provider = context.watch<HomeProvider>();
     return StreamBuilder(
-        stream: dbService.getTasks(),
+        stream: provider.getTasksStream(),
         builder: (context, snapshot) {
           List tasks = snapshot.data?.docs
                   .where((data) =>
@@ -262,7 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 onDismissed: (direction) {
                   // Delete task from db
-                  dbService.deleteTask(taskId);
+                  provider.deleteTask(taskId: taskId);
                 },
                 key: Key(taskId),
                 child: _roundedCheckBoxListTile(
@@ -273,7 +275,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onChanged: (bool? val) {
                     task.isDone = val!;
                     // Update the task
-                    dbService.updateTask(taskId, task);
+                    provider.updateTask(taskId: taskId, task: task);
                   },
                 ),
               );

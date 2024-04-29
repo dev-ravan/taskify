@@ -8,7 +8,9 @@ class AuthService {
 // Get user
   User? get user => _user;
 
-  AuthService();
+  AuthService() {
+    _user = _firebaseAuth.currentUser;
+  }
 
   // SignIn Method
   Future<bool> login(String email, String password) async {
@@ -50,4 +52,6 @@ class AuthService {
     }
     return false;
   }
+
+  Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
 }

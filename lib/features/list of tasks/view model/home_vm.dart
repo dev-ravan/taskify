@@ -1,8 +1,32 @@
+import 'dart:async';
+import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:taskify/features/add%20new%20task/view/add_new_task.dart';
+import 'package:taskify/model/tasks.dart';
+import 'package:taskify/services/database_service.dart';
 import 'package:taskify/utils/exports.dart';
 
 class HomeProvider extends ChangeNotifier {
+// Service locator
+  final GetIt _getIt = GetIt.instance;
+
+// Database service
+  late DatabaseService _databaseService;
+
+  HomeProvider() {
+    _databaseService = _getIt.get<DatabaseService>();
+  }
+
+  Stream getUserStream() => _databaseService.getSingleUser();
+
+  Stream getTasksStream() => _databaseService.getTasks();
+
+  void deleteTask({required String taskId}) =>
+      _databaseService.deleteTask(taskId);
+
+  void updateTask({required String taskId, required Tasks task}) =>
+      _databaseService.updateTask(taskId, task);
+
   DateTime selectedDate = DateTime.now();
 
   DateTime getSelectedDateWithoutTime() {
