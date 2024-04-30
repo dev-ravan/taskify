@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:taskify/common/constants.dart';
 import 'package:taskify/model/tasks.dart';
 import 'package:taskify/model/user_profile.dart';
 import 'package:taskify/utils/exports.dart';
@@ -61,14 +60,16 @@ class _HomeScreenState extends State<HomeScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // Name
         StreamBuilder(
             stream: homeProvider.getUserStream(),
             builder: (context, snapshot) {
-              List userDetails = snapshot.data?.docs;
-              if (userDetails.isEmpty) {
-                print("User Not found");
+              List userInfo = snapshot.data?.docs.toList() ?? [];
+              print(userInfo);
+              UserProfile user = userInfo[0].data();
+              if (snapshot.hasError) {
+                return const CircularProgressIndicator();
               }
+
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -76,10 +77,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       text: "Welcome Back!",
                       context: context,
                       alterColor: theme.tertiary),
-                  myTexts.med24dmSans(text: "Null", context: context),
+                  myTexts.med24dmSans(text: user.name ?? "", context: context),
                 ],
               );
             }),
+
         // Profile
         GestureDetector(
           onTap: () {
